@@ -7,19 +7,22 @@ const http = require('http');
 const fs = require('fs');
 const ejs = require('ejs');
 
+const client = new Client({
+  authStrategy: new LocalAuth({ dataPath: "auth" }),
+});
+
+client.on("qr", (qr) => {
+  qrcode.generate(qr, { small: true });
+});
+
+client.on("ready", () => {
+  console.log("whatsapp bot siap");
+});
+  
+client.initialize();
+
 const server = http.createServer((req, res) => {
   let showImageId = null
-  const client = new Client({
-    authStrategy: new LocalAuth({ dataPath: "auth" }),
-  });
-  
-  client.on("qr", (qr) => {
-    qrcode.generate(qr, { small: true });
-  });
-  
-  client.on("ready", () => {
-    console.log("whatsapp bot siap");
-  });
   
   function base64ToBlob(base64String, mimeType) {
     const byteCharacters = atob(base64String);
@@ -95,8 +98,6 @@ const server = http.createServer((req, res) => {
         });
     }
   });
-  
-  client.initialize();
 });
 
 const PORT = process.env.PORT || 3000;
